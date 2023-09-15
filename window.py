@@ -143,6 +143,7 @@ class Window():
         self.__name_frame.columnconfigure(0, weight = 1)
 
         self.__name_entry = Entry(self.__name_frame, font = self.master.fonts['mainfont'])
+        self.__name_entry.bind("<FocusOut>", lambda x: print('Focus Lost'))
         self.__name_entry.grid(row = 0, column = 0, padx = 5, pady = 5, sticky = N + W + S + E)
 
         # Характеристики карты: Стоимость
@@ -312,6 +313,10 @@ class Window():
                 pass
             try:
                 i.config(fg = ct)
+            except:
+                pass
+            try:
+                i.config(relief = 'flat')
             except:
                 pass
             
