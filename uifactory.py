@@ -1,4 +1,4 @@
-﻿import customtkinter as ctk
+import customtkinter as ctk
 from tkinter import ttk
 
 # This file is a factory for ctk objects and widgets/components
