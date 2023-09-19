@@ -3,6 +3,5 @@ from launcher import Launcher
 
 print('DO NOT CLOSE THIS WINDOW')
 
-mainapp = Launcher()
+mainapp = AscentCardEditor()
 mainapp.Run()
-

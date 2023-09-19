@@ -45,6 +45,11 @@ class WidgetGrid(ctk.CTkFrame):
         for itera in self.widgets:
             if itera[0] == wcode:
                 return itera[1]
+        for itera in self.widgets:
+            if isinstance(itera[1], WidgetGrid):
+                result = itera[1].FindWidget(wcode)
+                if result is not None:
+                    return result
         return None
             
 
@@ -57,6 +62,7 @@ class CoreWindow(ctk.CTk):
         super().__init__()
         
         self.type = style
+        self.observer = observer
         self.__setgrid__()
         self.__setsize__()
         self.__build__()
@@ -109,8 +115,8 @@ class CoreWindow(ctk.CTk):
     def __buildlauncher__(self):
         self.widgets = WidgetGrid(self, (1, 1, 1), (1, 1))
         self.widgets.AddWidget(ctk.CTkLabel(self.widgets, text='Ascent Card Editor', font=('Colus', 40)), (0, 0), (1, 2))
-        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим дизайнера', font=('Spectral', 20)), (1, 1))
-        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим художника', font=('Spectral', 20)), (2, 1))
+        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим дизайнера', font=('Spectral', 20), command=lambda: self.__death__('designer')), (1, 1))
+        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим художника', font=('Spectral', 20), command=lambda: self.__death__('artist')), (2, 1))
 
         # Adding grid for file table
         self.widgets.AddWidget(WidgetGrid(self.widgets), (1, 0), (2, 1), 'tablegrid')
@@ -118,17 +124,22 @@ class CoreWindow(ctk.CTk):
 
         # Adding table of files
         table = ttk.Treeview(tablegrid, columns=('filename'), show='headings')
-        table.heading('filename', text='Имя файла')
+        table.heading('#0', text = '', anchor = 'center')
+        table.column('#0', width = 0, stretch = NO, anchor = 'center')
+        table.heading('filename', text='Имя файла', anchor = 'center')
+        table.column('filename', anchor = 'center')
         tablegrid.AddWidget(table, (0, 0), wcode='setfiletable')
 
         # Adding scrollbar for table
-        tablegrid.AddWidget(ctk.CTkScrollbar(tablegrid, command=table.yview), (0, 1), sticky='nse')
+        tablegrid.AddWidget(ctk.CTkScrollbar(tablegrid, command=table.yview), (0, 1), wcode='scrollbar', sticky='nse')
+        scrollbar = self.widgets.FindWidget('scrollbar')
+        table.configure(yscrollcommand=scrollbar.set)
 
         # Adding table for management buttons and buttons themselves
         tablegrid.AddWidget(WidgetGrid(tablegrid, hweights=(1, 1)), (1, 0), (1, 2), 'managegrid', sticky='wse')
         managegrid = tablegrid.FindWidget('managegrid')
-        self.widgets.AddWidget(ctk.CTkButton(managegrid, text='Обновить', font=('Spectral', 14)), (0, 0))
-        self.widgets.AddWidget(ctk.CTkButton(managegrid, text='Создать', font=('Spectral', 14)), (0, 1))
+        self.widgets.AddWidget(ctk.CTkButton(managegrid, text='Обновить', font=('Spectral', 14), command=lambda: self.UpdateSetTable(self.observer.GetSetFileNames())), (0, 0))
+        self.widgets.AddWidget(ctk.CTkButton(managegrid, text='Создать', font=('Spectral', 14), command=self.observer.NewSet), (0, 1))
         
     def __builddesigner__(self):
         self.widgets = WidgetGrid(self, (1, 1))
@@ -165,3 +176,16 @@ class CoreWindow(ctk.CTk):
         # Adding grid for all the input boxes
         self.widgets.AddWidget(WidgetGrid(self.widgets), (1, 1), wcode='inputsgrid')
         inputsgrid = self.widgets.FindWidget('inputsgrid')
+        
+    def __death__(self, nextmode=None):
+        self.observer.SwapMode(nextmode)
+        self.destroy()
+
+    # Used in Launcher mode to update table of all set files
+    def UpdateSetTable(self, tabledata):
+        table = self.widgets.FindWidget('setfiletable')
+        table.delete(*table.get_children())
+        
+        for itera in range(len(tabledata)):
+
+            table.insert(parent = '', index = 'end', iid = itera, text = '', values = tabledata[itera])
