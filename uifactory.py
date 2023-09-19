@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from tkinter import ttk
+from tkinter import Label, ttk, NO
 
 # This file is a factory for ctk objects and widgets/components
 # that can be used to simplify building UI
@@ -60,6 +60,7 @@ class CoreWindow(ctk.CTk):
         self.__setgrid__()
         self.__setsize__()
         self.__build__()
+        self.__setscaling__()
         
         
 
@@ -84,8 +85,8 @@ class CoreWindow(ctk.CTk):
         y = (screenh - winh) // 2
 
         self.geometry(str(winw) + 'x' + str(winh) + '+' + str(x) + '+' + str(y))
-        
-        # Set scaling 
+
+    def __setscaling__(self):
         match(self.type):
             case 'artist':
                 self.after_idle(lambda: self.state('zoomed'))
@@ -129,3 +130,38 @@ class CoreWindow(ctk.CTk):
         self.widgets.AddWidget(ctk.CTkButton(managegrid, text='Обновить', font=('Spectral', 14)), (0, 0))
         self.widgets.AddWidget(ctk.CTkButton(managegrid, text='Создать', font=('Spectral', 14)), (0, 1))
         
+    def __builddesigner__(self):
+        self.widgets = WidgetGrid(self, (1, 1))
+        self.widgets.AddWidget(ctk.CTkLabel(self.widgets, text='Card in work', font=('Spectral', 20)), (0, 0), wcode='cardimage')
+        self.widgets.AddWidget(ctk.CTkTextbox(self.widgets, font=('Spectral', 20)), (1, 0), wcode='cardtext')
+
+        # Adding grid for card table
+        self.widgets.AddWidget(WidgetGrid(self.widgets), (0, 1), wcode='tablegrid')
+        tablegrid = self.widgets.FindWidget('tablegrid')
+
+        # Adding table of files
+        columns = ('id', 'cardname', 'cost', 'color', 'type', 'subtype', 'text', 'power')
+        columnweights = [40, 150, 75, 75, 100, 150, 150, 40]
+        table = ttk.Treeview(tablegrid, columns=columns, show='headings')
+
+        # Set headings for table
+        table.column('#0', width = 0, stretch = NO)
+        table.heading('#0', text = '', anchor = 'center')
+        table.heading('id', text='№')
+        table.heading('cardname', text='Название')
+        table.heading('cost', text='Стоимость')
+        table.heading('color', text='Цвет')
+        table.heading('type', text='Тип')
+        table.heading('subtype', text='Подтип')
+        table.heading('text', text='Текст')
+        table.heading('power', text='Сила')
+        for itera in range(len(columns)):
+            table.column(columns[itera], width=columnweights[itera])
+        tablegrid.AddWidget(table, (0, 0), wcode='cardtable')
+
+        # Adding scrollbar for table
+        tablegrid.AddWidget(ctk.CTkScrollbar(tablegrid, command=table.yview), (0, 1), sticky='nse')
+
+        # Adding grid for all the input boxes
+        self.widgets.AddWidget(WidgetGrid(self.widgets), (1, 1), wcode='inputsgrid')
+        inputsgrid = self.widgets.FindWidget('inputsgrid')
