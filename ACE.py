@@ -48,6 +48,9 @@ class AscentCardEditor(ctk.CTk):
     def OpenSet(self, name):
         self.sethandler.Load(name)
 
+    def SaveSet(self, data):
+        pass
+
     def GetSetCards(self):
         return self.sethandler.CardTable()
 

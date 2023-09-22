@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import os
-from tkinter import ttk, NO, END
+from tkinter import ttk, NO, END, INSERT
 
 # This file is a factory for ctk objects and widgets/components
 # that can be used to simplify building UI
@@ -146,7 +146,6 @@ class UiHandler():
             self.style = style
             self.__build__()
             self.master.SetScaling()
-
             
     def __buildlauncher__(self):
         self.widgets = WidgetGrid(self.master, (1, 1, 1), (1, 1))
@@ -225,7 +224,27 @@ class UiHandler():
         self.widgets.AddWidget(ctk.CTkEntry(inputsgrid, placeholder_text='Цвет карты', font=('Spectral', 16)), (1, 1), wcode='cardcolor')
         self.widgets.AddWidget(ctk.CTkEntry(inputsgrid, placeholder_text='Подтип карты', font=('Spectral', 16)), (2, 0), wcode='cardsubtype')
         self.widgets.AddWidget(ctk.CTkEntry(inputsgrid, placeholder_text='Сила карты (или X)', font=('Spectral', 16)), (2, 1), wcode='cardpower')
+
+        self.widgets.FindWidget('cardname').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
+        self.widgets.FindWidget('cardcost').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
+        self.widgets.FindWidget('cardtype').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
+        self.widgets.FindWidget('cardcolor').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
+        self.widgets.FindWidget('cardsubtype').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
+        self.widgets.FindWidget('cardpower').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
+        self.widgets.FindWidget('cardtext').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
     
+    def __changecardvalue__(self):
+        table = self.widgets.FindWidget('cardtable')
+        index = table.focus()
+
+        table.set(index, 'cardname', self.widgets.FindWidget('cardname').get())
+        table.set(index, 'cost', self.widgets.FindWidget('cardcost').get())
+        table.set(index, 'color', self.widgets.FindWidget('cardcolor').get())
+        table.set(index, 'type', self.widgets.FindWidget('cardtype').get())
+        table.set(index, 'subtype', self.widgets.FindWidget('cardsubtype').get())
+        table.set(index, 'power', self.widgets.FindWidget('cardpower').get())
+        table.set(index, 'text', self.widgets.FindWidget('cardtext').get('1.0', END)[0:-1])
+
     # Used in Designer mode to fill Entry boxes with card values
     def __loadcard__(self):
         table = self.widgets.FindWidget('cardtable')
@@ -254,6 +273,10 @@ class UiHandler():
         cardpower = self.widgets.FindWidget('cardpower')
         cardpower.delete(0, END)
         cardpower.insert(END, values[7])
+
+        cardtext = self.widgets.FindWidget('cardtext')
+        cardtext.delete('1.0', END)
+        cardtext.insert(INSERT, values[6])
 
     # Used in Launcher mode to update table of all set files
     def __updatesettable__(self):
