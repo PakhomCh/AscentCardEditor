@@ -15,7 +15,3 @@ class Launcher(AppHandler):
         handler = SetHandler()
         handler.New()
         handler.Save()
-
-    def GetSetFileNames(self):
-        filenames = [x.split('.ace-set')[0] for x in os.listdir('.\sets') if '.ace-set' in x]
-        return filenames

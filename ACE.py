@@ -1,15 +1,12 @@
-from doctest import master
-from window import Window
-from setaccess import SetAccess
-from dataccess import DatAccess
+import customtkinter as ctk
+from uihandler import UiHandler
+from xmlhandler import SetHandler
 
-from launcher import Launcher
-from designer import Designer
-
-class AscentCardEditor():
+class AscentCardEditor(ctk.CTk):
 
     def __init__(self):
-        
+        super().__init__()
+
         # Legacy code
         # self.dat_access = DatAccess()
         # self.hotkeys = self.dat_access.hotkeys()
@@ -19,34 +16,47 @@ class AscentCardEditor():
         # self.set_access = SetAccess(master = self)
         # self.color_themes = self.dat_access.color_themes()
         # self.window = Window(master = self)
-
-        self.mode = 'launcher'
-
-        # This status shows, if programm should start inner loop, held by another handler, 
-        # like Launcher, Designer or Artist
-        self.isrunning = True
-        self.__setapp__()
-
-    def __setapp__(self):
-        match(self.mode):
-            case 'designer':
-                self.app = Designer(self)
-            case 'artist':
-                pass
-            case 'launcher':
-                self.app = Launcher(self)
         
-    def SwapMode(self, mode):
-        self.mode = mode
-        self.__setapp__()
-        self.isrunning = True
+        self.uihandler = UiHandler(self)
+        self.sethandler = SetHandler()
+        self.__setsize__()
+        self.SetScaling()
 
-    def Run(self):
-        while self.isrunning:
-            # Set status variable to show that no other handler is gonna be open after this one
-            self.isrunning = False
-            self.app.Run()
+    def __setsize__(self):
 
-    def Exit(self):
+        # Get height of a user's screen
+        screenw = self.winfo_screenwidth()
+        screenh = self.winfo_screenheight()
 
-        pass
+        # Set width and height of a window
+        winh = screenh // 2
+        winw = winh // 3 * 4
+
+        # Set window coordinates to middle of screen
+        x = (screenw - winw) // 2
+        y = (screenh - winh) // 2
+
+        self.geometry(str(winw) + 'x' + str(winh) + '+' + str(x) + '+' + str(y))
+        self.columnconfigure(0, weight=1)
+        self.rowconfigure(0, weight=1)
+
+    def AddSet(self, data):
+        self.sethandler.New(*data)
+        self.sethandler.Save()
+        self.sethandler.Drop()
+
+    def OpenSet(self, name):
+        self.sethandler.Load(name)
+
+    def GetSetCards(self):
+        return self.sethandler.CardTable()
+
+    def SetScaling(self):
+        match(self.uihandler.Style()):
+            case 'artist':
+                self.after_idle(lambda: self.state('zoomed'))
+            case 'designer':
+                self.after_idle(lambda: self.state('zoomed'))
+            case 'launcher':
+                pass
+

@@ -38,7 +38,7 @@ class SetHandler():
         self.tree = None
 
     # Set Types:    Default     (50 cards + 5 tokens)
-    #               Core        (250 cards + 5 tokens)
+    #               Core        (250 cards + 10 tokens)
     #               Base        (36 cards)
     #               Empty       (0 cards)
     #               Custom      (Undetermined)
@@ -56,10 +56,10 @@ class SetHandler():
         # Setting up the kaset block
         setblock = xml.Element('kaset')
         setblock.set('name', name)
-        setblock.set('code', code)
-        setblock.set('type', settype)
+        setblock.set('code', code.upper())
+        setblock.set('type', settype.lower())
         setblock.set('release', release)
-        setblock.set('size', str(SETSIZE[settype][2]))
+        setblock.set('size', str(SETSIZE[settype.lower()][2]))
         
         # Adding copyright info
         setblock.insert(0, xml.Comment('CREATED AUTOMATICALLY WITH ASCENT SET EDITOR, COPYRIGHT KONTINUUM LLC'))
@@ -69,7 +69,7 @@ class SetHandler():
     
         # Adding blank cards to set size
         cards = []
-        cardcount = SETSIZE[settype][0]
+        cardcount = SETSIZE[settype.lower()][0]
         for itera in range(cardcount):
         
             cardcolor = COLORS[itera // (cardcount // 5)]
@@ -95,7 +95,7 @@ class SetHandler():
         tokenblock = xml.SubElement(setblock, "tokens")
 
         # Adding blank tokens to set size
-        tokencount = SETSIZE[settype][1]
+        tokencount = SETSIZE[settype.lower()][1]
         for itera in range(tokencount):
         
             cardcolor = COLORS[itera // (tokencount // 5)]
@@ -120,10 +120,16 @@ class SetHandler():
         # Saving set tree
         self.tree = xml.ElementTree(setblock)
 
+    def CardTable(self):
+        root = self.tree.getroot()
+        cards = root.find('cards')
+        table = []
+        for itera in cards:
+            card = [x[1] for x in itera.items()[0 : -2]]
+            table.append([card[0], card[1], card[5], card[2], card[6], card[7], card[4], card[3]])
+        return table
+
     # FINISH THIS ONE
     def Fetch(self, something):
         pass
     
-    
-
-
