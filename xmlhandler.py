@@ -79,12 +79,12 @@ class SetHandler():
             card = xml.SubElement(cardblock, 'card')
             card.set('id', str(itera))
             card.set('name', letter + str(itera % (cardcount // 5)))
-            card.set('color', cardcolor)
-            card.set('power', 'X')
-            card.set('text', '')
             card.set('cost', '')
+            card.set('color', cardcolor)
+            card.set('text', '')
             card.set('type', '')
             card.set('subtype', '')
+            card.set('power', 'X')
             card.set('art', '')
             card.set('istoken', '0')
 
@@ -105,12 +105,12 @@ class SetHandler():
             token = xml.SubElement(tokenblock, 'card')
             token.set('id', str(itera + cardcount))
             token.set('name', 'T' + letter + str(itera % (cardcount // 5)))
-            token.set('color', cardcolor)
-            token.set('power', 'X')
-            token.set('text', '')
             token.set('cost', '')
+            token.set('color', cardcolor)
             token.set('type', '')
             token.set('subtype', '')
+            token.set('power', 'X')
+            token.set('text', '')
             token.set('art', '')
             token.set('istoken', '1')
 
@@ -126,10 +126,26 @@ class SetHandler():
         table = []
         for itera in cards:
             card = [x[1] for x in itera.items()[0 : -2]]
-            table.append([card[0], card[1], card[5], card[2], card[6], card[7], card[4], card[3]])
+            table.append([*card])
         return table
 
     # FINISH THIS ONE
     def Fetch(self, something):
         pass
+
+    def EditCard(self, values):
+        index = values[0]
+        root = self.tree.getroot()
+        cards = root.find('cards')
+        for card in cards:
+            if card.get('id') == str(index):
+                card.set('name', values[1])
+                card.set('cost', values[2])
+                card.set('color', values[3])
+                card.set('type', values[4])
+                card.set('subtype', values[5])
+                card.set('power', values[6])
+                card.set('text', values[7])
+                return
+
     

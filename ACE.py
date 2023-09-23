@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from uihandler import UiHandler
 from xmlhandler import SetHandler
+from menuhandler import MenuHandler
 
 class AscentCardEditor(ctk.CTk):
 
@@ -18,9 +19,10 @@ class AscentCardEditor(ctk.CTk):
         # self.window = Window(master = self)
         
         self.uihandler = UiHandler(self)
+        self.menuhandler = MenuHandler(self)
         self.sethandler = SetHandler()
         self.__setsize__()
-        self.SetScaling()
+        self.SetWindow()
 
     def __setsize__(self):
 
@@ -48,18 +50,25 @@ class AscentCardEditor(ctk.CTk):
     def OpenSet(self, name):
         self.sethandler.Load(name)
 
-    def SaveSet(self, data):
-        pass
-
     def GetSetCards(self):
         return self.sethandler.CardTable()
 
-    def SetScaling(self):
+    def SaveSet(self):
+        match(self.uihandler.Style()):
+            case 'designer':
+                table = self.uihandler.Table()
+                for itera in table:
+                    self.sethandler.EditCard(itera)
+                self.sethandler.Save()
+
+    def SetWindow(self):
         match(self.uihandler.Style()):
             case 'artist':
                 self.after_idle(lambda: self.state('zoomed'))
+                self.menuhandler.ChangeStyle('artist')
             case 'designer':
                 self.after_idle(lambda: self.state('zoomed'))
+                self.menuhandler.ChangeStyle('designer')
             case 'launcher':
-                pass
+                self.menuhandler.ChangeStyle('launcher')
 

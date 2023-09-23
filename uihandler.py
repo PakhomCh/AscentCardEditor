@@ -140,12 +140,12 @@ class UiHandler():
             self.widgets.destroy()
             self.style = style
             self.__build__()
-            self.master.SetScaling()
+            self.master.SetWindow()
         else:
             self.widgets.destroy()
             self.style = style
             self.__build__()
-            self.master.SetScaling()
+            self.master.SetWindow()
             
     def __buildlauncher__(self):
         self.widgets = WidgetGrid(self.master, (1, 1, 1), (1, 1))
@@ -309,3 +309,10 @@ class UiHandler():
     def Style(self):
         return self.style
     
+    def Table(self):
+        table = self.widgets.FindWidget('cardtable')
+        result = []
+        for itera in table.get_children():
+            row = table.item(itera)['values']
+            result.append(row)
+        return result
