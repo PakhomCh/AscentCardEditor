@@ -70,5 +70,9 @@ class AscentCardEditor(ctk.CTk):
                 self.after_idle(lambda: self.state('zoomed'))
                 self.menuhandler.ChangeStyle('designer')
             case 'launcher':
+                self.after_idle(lambda: self.state('normal'))
                 self.menuhandler.ChangeStyle('launcher')
+
+    def ChangeStyleByMenu(self, style):
+        self.uihandler.ChangeStyle(style)
 

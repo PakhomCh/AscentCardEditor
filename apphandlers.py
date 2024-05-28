@@ -11,3 +11,6 @@ class AppHandler():
     def SwapMode(self, mode):        
         if mode != None:
             self.master.SwapMode(mode)
+
+# I do not know, why this file exists
+# It is nit implemented anywhere

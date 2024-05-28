@@ -6,14 +6,15 @@ class MenuHandler():
         self.style = style
         if style != 'launcher':
             self.__build__()
-        self.menu = Menu(self.master)
+        else:
+            self.menu = Menu(self.master)
     
     def __build__(self):
         self.menu = Menu(self.master)
         self.menubar = {}
 
         self.menubar['editor'] = Menu(self.menu, tearoff=0)
-        self.menubar['editor'].add_command(label='К лаунчеру', underline=0, command=self.blank)
+        self.menubar['editor'].add_command(label='К лаунчеру', underline=0, command=lambda: self.master.ChangeStyleByMenu('launcher'))
         self.menubar['editor'].add_separator()
         self.menubar['editor'].add_command(label='Смена режима', underline=0, command=self.blank)
         self.menu.add_cascade(label='Редактор', underline=0, menu=self.menubar['editor'])

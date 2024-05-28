@@ -71,7 +71,7 @@ class SetHandler():
         cards = []
         cardcount = SETSIZE[settype.lower()][0]
         for itera in range(cardcount):
-        
+            
             cardcolor = COLORS[itera // (cardcount // 5)]
             letter = SHORTCOLORS[itera // (cardcount // 5)]
         

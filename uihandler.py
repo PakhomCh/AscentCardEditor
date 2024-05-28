@@ -130,7 +130,7 @@ class UiHandler():
                 self.__updatesettable__()
         self.widgets.grid(row=0, column=0, sticky='nwse')
 
-    def __changestyle__(self, style):
+    def ChangeStyle(self, style):
         if self.style == 'launcher' and self.widgets.FindWidget('setfiletable').focus() == '':
             pass
         elif self.style == 'launcher':
@@ -142,6 +142,8 @@ class UiHandler():
             self.__build__()
             self.master.SetWindow()
         else:
+            table = self.widgets.FindWidget('cardtable')
+            table.unbind_all("<<TreeviewSelect>>")
             self.widgets.destroy()
             self.style = style
             self.__build__()
@@ -150,8 +152,8 @@ class UiHandler():
     def __buildlauncher__(self):
         self.widgets = WidgetGrid(self.master, (1, 1, 1), (1, 1))
         self.widgets.AddWidget(ctk.CTkLabel(self.widgets, text='Ascent Card Editor', font=('Colus', 40)), (0, 0), (1, 2))
-        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим дизайнера', font=('Spectral', 20), command=lambda: self.__changestyle__('designer')), (1, 1))
-        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим художника', font=('Spectral', 20), command=lambda: self.__changestyle__('artist')), (2, 1))
+        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим дизайнера', font=('Spectral', 20), command=lambda: self.ChangeStyle('designer')), (1, 1))
+        self.widgets.AddWidget(ctk.CTkButton(self.widgets, text='Режим художника', font=('Spectral', 20), command=lambda: self.ChangeStyle('artist')), (2, 1))
 
         # Adding grid for file table
         self.widgets.AddWidget(WidgetGrid(self.widgets), (1, 0), (2, 1), 'tablegrid')
@@ -225,6 +227,7 @@ class UiHandler():
         self.widgets.AddWidget(ctk.CTkEntry(inputsgrid, placeholder_text='Подтип карты', font=('Spectral', 16)), (2, 0), wcode='cardsubtype')
         self.widgets.AddWidget(ctk.CTkEntry(inputsgrid, placeholder_text='Сила карты (или X)', font=('Spectral', 16)), (2, 1), wcode='cardpower')
 
+        # Enable changes autosave
         self.widgets.FindWidget('cardname').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
         self.widgets.FindWidget('cardcost').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
         self.widgets.FindWidget('cardtype').bind('<KeyRelease>', lambda e: self.__changecardvalue__())
@@ -288,7 +291,7 @@ class UiHandler():
             table.insert(parent='', index='end', iid=itera, text='', values=tabledata[itera])
             
     def __createnewset__(self):
-        request = (('text', 'Название сета'), ('text', 'Код сета'), ('choice', 'Тип сета', ('Default (50 + 5)', 'Core (250 + 10)', 'Base (36)', 'Empty', 'Custom')), ('text', 'Релиз: *-**'))
+        request = (('text', 'Название сета'), ('text', 'Код сета'), ('choice', 'Тип сета', ('Default (50 + 5)', 'Core (250 + 10)', 'Base (45)', 'Empty', 'Custom')), ('text', 'Релиз: *-**'))
         data = CustomDialog('Заполните информацию о сете', 'Новый сет', request).Get()
         if data is not None:
             data[2] = data[2].split()[0]
